@@ -123,6 +123,7 @@ input.c.html   OR   output_name.html
 **Fahed Shaikh**
 
 🎓 BE in Electronics & Telecommunication Engineering
+
 🛠️ Skills: C Programming, Embedded Systems, Parsing, File Handling
 
 ---

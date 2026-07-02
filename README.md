@@ -1,133 +1,178 @@
-# 🎨 Source to HTML Converter (s2html)
+# Source to HTML Converter (s2html)
 
-A C-based tool that converts C source code into an HTML file with syntax highlighting. It parses the input file using a state-machine-based lexer and generates structured HTML output styled with CSS.
+A lightweight **Source-to-HTML Converter** written in **C** that transforms C source code into a syntax-highlighted HTML document.
 
----
-
-## 🚀 Features
-
-* 🎯 Syntax highlighting for:
-
-  * Keywords (`int`, `return`, `if`, etc.)
-  * Identifiers (variables & functions)
-  * Numeric constants (`123`, `45.6`)
-  * String literals (`"Hello"`)
-  * Character literals (`'a'`, `'\n'`)
-  * Comments (`//`, `/* */`)
-  * Preprocessor directives (`#include`, `#define`)
-  * Header files:
-
-    * Standard (`<stdio.h>`)
-    * User-defined (`"file.h"`)
-* 🔁 State-machine-based parsing (lexer)
-* 🧩 Event-driven design (parser → converter)
-* 🌐 HTML-safe output (`<` → `&lt;`, `>` → `&gt;`)
-* 🎨 External CSS styling (`styles.css`)
-* 📄 Preserves formatting using `<pre>`
+The project uses a **Finite State Machine (FSM)** based lexical parser to identify different C language tokens such as keywords, strings, comments, numeric constants, character literals, preprocessor directives, and header files. Each parsed token is converted into styled HTML using CSS, producing readable source code similar to modern code editors.
 
 ---
 
-## ⚙️ How to Compile & Run
+## Features
 
-### 🔹 Compile
+- Syntax highlighting for C source files
+- State-machine based lexical parser
+- Event-driven parsing architecture
+- Supports:
+  - Reserved keywords
+  - Identifiers
+  - Numeric constants
+  - String literals
+  - Character literals
+  - Single-line comments
+  - Multi-line comments
+  - Preprocessor directives
+  - Standard header files (`<stdio.h>`)
+  - User-defined header files (`"file.h"`)
+- HTML-safe character escaping
+- Preserves original source formatting using `<pre>`
+- Modular project structure
+
+---
+
+## Project Architecture
+
+```
+                Source File (.c)
+                        │
+                        ▼
+              Character-by-Character Parser
+                        │
+                        ▼
+               Finite State Machine (FSM)
+                        │
+                        ▼
+                 Parser Events (Tokens)
+                        │
+                        ▼
+               HTML Conversion Module
+                        │
+                        ▼
+            Syntax Highlighted HTML File
+```
+
+---
+
+## Project Structure
+
+```
+.
+├── s2html_main.c
+├── s2html_event.c
+├── s2html_event.h
+├── s2html_conv.c
+├── s2html_conv.h
+├── styles.css
+├── test.c
+└── README.md
+```
+
+---
+
+## Build
 
 ```bash
 gcc s2html_main.c s2html_event.c s2html_conv.c -o s2html
 ```
 
-### 🔹 Run
+---
+
+## Usage
+
+Generate HTML using the default output name:
 
 ```bash
 ./s2html input.c
 ```
 
-### 🔹 Optional (custom output name)
+Generate HTML using a custom output name:
 
 ```bash
-./s2html input.c output_name
+./s2html input.c output
 ```
 
-👉 This will generate:
+Output:
 
 ```
-input.c.html   OR   output_name.html
+input.c.html
+```
+
+or
+
+```
+output.html
 ```
 
 ---
 
-## 📁 File Structure
+## Parser Workflow
 
-| File Name      | Description                               |
-| -------------- | ----------------------------------------- |
-| s2html_main.c  | Entry point, handles file I/O and flow    |
-| s2html_event.c | Parser (state machine, token generation)  |
-| s2html_event.h | Event types, structures, parser interface |
-| s2html_conv.c  | Converts tokens to HTML with styling      |
-| s2html_conv.h  | Function declarations for HTML conversion |
-| styles.css     | CSS styles for syntax highlighting        |
-| test.c         | Sample test file (covers all token types) |
+The parser reads the source code **one character at a time**.
+
+Depending on the current parser state, it generates parser events for different token types.
+
+Each generated event is passed to the HTML converter, which wraps the token inside the appropriate HTML `<span>` element with CSS styling.
 
 ---
 
-## 🧠 Key Concepts Used
+## Technologies Used
 
-* Compiler Design (Lexical Analysis)
-* Finite State Machine (FSM)
-* Tokenization
-* File Handling in C (`fgetc`, `fseek`)
-* String Handling (`strcmp`, `strcpy`, `strlen`)
-* Modular Programming
-* HTML & CSS Integration
-
----
-
-## 🔄 How It Works
-
-1. The program reads the input file character by character.
-2. The parser (state machine) identifies tokens based on context:
-
-   * word, number, string, comment, preprocessor, etc.
-3. Each token is stored as an event (`pevent_t`).
-4. The converter maps events to HTML `<span>` tags with CSS classes.
-5. Output is written inside a `<pre>` block to preserve formatting.
+- C Programming
+- Finite State Machine (FSM)
+- Lexical Analysis
+- File Handling
+- HTML
+- CSS
+- Modular Programming
 
 ---
 
-## 📌 Sample Output
+## Example
+
+Input
+
+```c
+#include <stdio.h>
+
+int main()
+{
+    printf("Hello World");
+    return 0;
+}
+```
+
+Output
 
 ```html
+<span class="preprocess_dir">#include</span>
+<span class="header_file">&lt;stdio.h&gt;</span>
+
 <span class="reserved_key1">int</span> main()
 {
-    <span class="reserved_key1">return</span> <span class="numeric_constant">0</span>;
+    printf(<span class="string">"Hello World"</span>);
+    <span class="reserved_key1">return</span>
+    <span class="numeric_constant">0</span>;
 }
 ```
 
 ---
 
-## 🎨 Sample Highlighting
+## Future Improvements
 
-| Token Type        | Example      | Style Class         |
-| ----------------- | ------------ | ------------------- |
-| Keyword           | `int`        | `.reserved_key1`    |
-| String            | `"Hello"`    | `.string`           |
-| Number            | `123`        | `.numeric_constant` |
-| Comment           | `// comment` | `.comment`          |
-| Preprocessor      | `#include`   | `.preprocess_dir`   |
-| Header File       | `<stdio.h>`  | `.header_file`      |
-| Character Literal | `'a'`        | `.ascii_char`       |
+- Floating-point number parsing
+- Hexadecimal and binary literals
+- Multi-language syntax highlighting
+- Command-line options
+- Theme support
+- Line numbering
+- Error reporting
 
 ---
 
-## 🧑‍💻 Developer
+## Author
 
 **Fahed Shaikh**
 
-🎓 BE in Electronics & Telecommunication Engineering
+BE Electronics & Telecommunication Engineering
 
-🛠️ Skills: C Programming, Embedded Systems, Parsing, File Handling
+Embedded Systems | C Programming | Linux | Compiler Fundamentals
 
 ---
-
-## 📌 About
-
-This project simulates syntax highlighting similar to code editors by converting raw C source code into a styled HTML document. It demonstrates how lexical analysis and state-based parsing can be used to interpret and transform programming languages into structured output.

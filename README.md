@@ -1,6 +1,6 @@
 <div align="center">
 
-# s2html — Source to HTML Converter
+# S2Html — Source to HTML Converter
 
 **A lightweight C utility that converts C source files into syntax-highlighted HTML documents.**
 
